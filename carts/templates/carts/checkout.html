@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'includes/header.html' %}
+
+
+
+    <!-- ============================ COMPONENT 1 ================================= -->
+    <section class="section-content padding-y bg">
+    <div class="container">
+<form action = "{% url 'place_order' %}" method = 'POST'>
+    {% csrf_token %}
+    <div class="row">
+        <aside class="col-lg-7">
+                    <div class="row">
+                        <div class="item-option-select">
+                          <h6>Select Address</h6>
+                          <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
+                            {% for address in addresses %}
+                            <label class="btn btn-light">
+                                <input type="radio" name="address" value = "{{address.id}}" required /> {{address.full_name| capfirst}}
+                                <br> {{address.full_address}}
+                              </label>
+                            {% endfor %}
+                            
+                          </div>
+                        </div>
+                      </div>
+                      <a href="{% url 'address_page' %}" class="btn btn-outline-primary"> Add Address</a>
+                    <br><br>
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label>Order Note</label>
+                                {{form.order_note}}
+                        </div> <!-- form-group end.// -->
+                    </div>
+                    
+                    <!-- form-group// -->      
+
+    <div class="card">
+    
+    </div> <!-- card.// -->
+    
+        </aside> <!-- col.// -->
+        <aside class="col-lg-5">
+    
+            <div class="card">
+
+                <table class="table table-borderless table-shopping-cart">
+                    <tbody>
+                
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>
+                            <figure class="itemside align-items-center">
+                                <div class="aside"> <a href="{{ item.product.get_url }}" ><img src="{{item.product.images.url}}" class="img-sm"> </a></div>
+                                <figcaption class="info">
+                                    <a href="{{ item.product.get_url }}" class="title text-dark">{{item.product.product_name}}</a>
+                                    <p class="text-muted small">
+                                        {% for variety in item.variations.all %}
+                                            {{ variety.variation_category }} : {{ variety.variation_value}}
+                                            <br>
+                                        {% endfor %}
+                                    </p>
+                                </figcaption>
+                            </figure>
+                        </td>
+                        <td> 
+                            <!-- col.// -->
+                                        <div class="col"> 
+                                            <div class="input-group input-spinner">
+                                                <input type="text" class="form-control"  value="{{ item.quantity }}">
+                                            </div> <!-- input-group.// -->
+                                        </div> <!-- col.// -->
+                        </td>
+                        <td> 
+                            <div class="price-wrap"> 
+                                <var class="price">${{item.sub_total}}</var> 
+                                <small class="text-muted"> ${{item.product.price}} </small> 
+                            </div> <!-- price-wrap .// -->
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                    </tbody>
+                    </table>
+            <div class="card-body">
+                
+                <button class="btn btn-primary btn-block" type="submit" {%if addresses|length == 0%} disabled {%endif%}> Place Order </button>
+
+                <a href="{% url 'store' %}" class="btn btn-light btn-block">Continue Shopping</a>
+            </div> <!-- card-body.// -->
+            </div> <!-- card.// -->
+    
+        </aside> <!-- col.// -->
+    
+    
+    </div> <!-- row.// -->
+    <!-- ============================ COMPONENT 1 END .// ================================= -->
+</form>
+    </div> <!-- container .//  -->
+    </section>
+
+
+{% include 'includes/footer.html' %}
+{% endblock %}
